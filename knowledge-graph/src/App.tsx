@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
 import { fetchArticles, exploreGraph, saveExploration, deleteExploration } from './services/apiService';
+import ForceGraph2D from 'react-force-graph-2d';
 
 interface Article {
   id: string;
@@ -55,11 +56,16 @@ function App() {
     }
   };
 
+  const sanitizeText = (text: string) => {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(text, 'text/html');
+    return doc.body.textContent || '';
+  };
+
   return (
     <div className="App">
       <header className="App-header">
-       
-        <h1>Vite + React + TypeScript</h1>
+        <h1>El Grafo de Conocimiento</h1>
       </header>
       <main className="App-main">
         <div className="search-bar">
@@ -78,13 +84,19 @@ function App() {
         <div className="articles-list">
           {articles.map((article) => (
             <div key={article.id} onClick={() => handleExplore(article.title)}>
-              <h3>{article.title}</h3>
-              <p>{article.summary}</p>
+              <h3>{sanitizeText(article.title)}</h3>
+              <p>{sanitizeText(article.summary)}</p>
             </div>
           ))}
         </div>
         <div className="graph-visualization">
-          {/* Aquí iría la lógica para renderizar el grafo usando los nodos y aristas */}
+          <ForceGraph2D
+            graphData={{ nodes, links: edges }}
+            nodeLabel="label"
+            linkDirectionalArrowLength={3.5}
+            linkDirectionalArrowRelPos={1}
+            linkCurvature={0.25}
+          />
         </div>
         <p className="read-the-docs">
           Click on the Vite and React logos to learn more
