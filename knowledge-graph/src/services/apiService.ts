@@ -1,5 +1,7 @@
+const BASE_URL = 'http://127.0.0.1:8000';
+
 export const fetchArticles = async (query: string) => {
-  const response = await fetch(`/api/search?term=${query}`);
+  const response = await fetch(`${BASE_URL}/api/search?term=${query}`);
   if (!response.ok) {
     throw new Error('Failed to fetch articles');
   }
@@ -7,7 +9,7 @@ export const fetchArticles = async (query: string) => {
 };
 
 export const exploreGraph = async (articleTitle: string, depth: number) => {
-  const response = await fetch(`/api/explore/${articleTitle}?depth=${depth}`);
+  const response = await fetch(`${BASE_URL}/api/explore/${articleTitle}?depth=${depth}`);
   if (!response.ok) {
     throw new Error('Failed to explore graph');
   }
@@ -15,7 +17,7 @@ export const exploreGraph = async (articleTitle: string, depth: number) => {
 };
 
 export const saveExploration = async (explorationData: any) => {
-  const response = await fetch('/api/explorations', {
+  const response = await fetch(`${BASE_URL}/api/explorations`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -29,7 +31,7 @@ export const saveExploration = async (explorationData: any) => {
 };
 
 export const deleteExploration = async (explorationId: string) => {
-  const response = await fetch(`/api/explorations/${explorationId}`, {
+  const response = await fetch(`${BASE_URL}/api/explorations/${explorationId}`, {
     method: 'DELETE',
   });
   if (!response.ok) {
