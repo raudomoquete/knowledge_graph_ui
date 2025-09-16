@@ -45,5 +45,5 @@ export const deleteExploration = async (explorationId: string) => {
   if (!response.ok) {
     throw new Error('Failed to delete exploration');
   }
-  return response.json();
+  return response.status === 200;
 };

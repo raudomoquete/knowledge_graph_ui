@@ -15,6 +15,16 @@ interface MyExplorationsProps {
 }
 
 const MyExplorations: React.FC<MyExplorationsProps> = ({ explorations, handleExplore, deleteExploration, sanitizeText, onClose }) => {
+  const handleDelete = async (id: string) => {
+    try {
+      await deleteExploration(id);
+      alert('Exploración eliminada exitosamente');
+      onClose(); // Cerrar el modal después de eliminar
+    } catch (error) {
+      alert('Error al eliminar la exploración');
+    }
+  };
+
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
@@ -26,7 +36,7 @@ const MyExplorations: React.FC<MyExplorationsProps> = ({ explorations, handleExp
               <h3 style={{ flex: 1 }}>{sanitizeText(exploration.title)}</h3>
               <div>
                 <button onClick={() => handleExplore(exploration.title)} style={{ marginRight: '10px' }}>Cargar</button>
-                <button onClick={() => deleteExploration(exploration._id)}>Eliminar</button>
+                <button onClick={() => handleDelete(exploration._id)}>Eliminar</button>
               </div>
             </li>
           ))}
