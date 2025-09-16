@@ -131,6 +131,9 @@ function App() {
             <button onClick={() => setShowExplorations(true)} disabled={loading}>
               Exploraciones
             </button>
+            <button onClick={() => window.location.reload()} disabled={loading}>
+              Refrescar
+            </button>
           </div>
           {loading && <p>Cargando...</p>}
           {error && <p style={{ color: 'red' }}>{error}</p>}
@@ -158,11 +161,9 @@ function App() {
               handleExplore={handleExplore} 
               deleteExploration={deleteExploration} 
               sanitizeText={sanitizeText} 
+              onClose={() => setShowExplorations(false)} 
             />
           )}
-          <p className="read-the-docs">
-            Click on the Vite and React logos to learn more
-          </p>
         </main>
       </div>
       <div className={`sidebar ${selectedNode ? 'visible' : ''}`}>
