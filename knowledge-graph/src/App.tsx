@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
-import { fetchArticles, exploreGraph, saveExploration, deleteExploration } from './services/apiService';
+import { fetchArticles, exploreGraph, saveExploration, deleteExploration, fetchExplorations } from './services/apiService';
 import ForceGraph2D from 'react-force-graph-2d';
+import MyExplorations from './components/MyExplorations';
 
 interface Article {
   id: string;
@@ -12,12 +13,17 @@ interface Article {
 interface Node {
   id: string;
   label: string;
-  summary?: string;
 }
 
 interface Edge {
   from: string;
   to: string;
+}
+
+interface Exploration {
+  _id: string;
+  title: string;
+  summary: string;
 }
 
 function App() {
@@ -30,6 +36,27 @@ function App() {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedNode, setSelectedNode] = useState<Node | null>(null);
+  const [explorations, setExplorations] = useState<Exploration[]>([]);
+  const [showExplorations, setShowExplorations] = useState<boolean>(false);
+
+  useEffect(() => {
+    // Fetch saved explorations
+    const fetchAllExplorations = async () => {
+      try {
+        const response = await fetchExplorations();
+        const sanitizedData = response.map((exploration: Exploration) => ({
+          ...exploration,
+          title: sanitizeText(exploration.title),
+          summary: sanitizeText(exploration.summary)
+        }));
+        setExplorations(sanitizedData);
+      } catch (err) {
+        console.error('Failed to fetch explorations:', err);
+        setError('Failed to fetch explorations');
+      }
+    };
+    fetchAllExplorations();
+  }, []);
 
   const handleSearch = async () => {
     setLoading(true);
@@ -58,13 +85,11 @@ function App() {
     }
   };
 
-  const handleNodeClick = (node: any) => {
-  setSelectedNode({
-    id: node.id,
-    label: node.label,
-    summary: node.summary || ''
-  });
-};
+  const handleNodeClick = (node: Node) => {
+    console.log('Node clicked:', node);
+    setSelectedNode(node);
+    console.log('Selected node:', selectedNode);
+  };
 
   const expandNode = async (node: Node) => {
     setLoading(true);
@@ -103,6 +128,9 @@ function App() {
             <button onClick={handleSearch} disabled={loading}>
               Buscar
             </button>
+            <button onClick={() => setShowExplorations(true)} disabled={loading}>
+              Exploraciones
+            </button>
           </div>
           {loading && <p>Cargando...</p>}
           {error && <p style={{ color: 'red' }}>{error}</p>}
@@ -122,9 +150,16 @@ function App() {
               linkDirectionalArrowRelPos={1}
               linkCurvature={0.25}
               onNodeClick={handleNodeClick}
-              nodeColor={() => "#64FFDA"}
             />
           </div>
+          {showExplorations && (
+            <MyExplorations 
+              explorations={explorations} 
+              handleExplore={handleExplore} 
+              deleteExploration={deleteExploration} 
+              sanitizeText={sanitizeText} 
+            />
+          )}
           <p className="read-the-docs">
             Click on the Vite and React logos to learn more
           </p>
@@ -134,9 +169,7 @@ function App() {
         {selectedNode && (
           <div className="node-summary">
             <h3>{selectedNode.label}</h3>
-            <p>{selectedNode.summary}</p>
             <button onClick={() => expandNode(selectedNode)}>Expandir Nodo</button>
-            <button onClick={() => setSelectedNode(null)}>Cerrar</button>
           </div>
         )}
       </div>

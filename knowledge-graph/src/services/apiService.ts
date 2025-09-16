@@ -30,6 +30,14 @@ export const saveExploration = async (explorationData: any) => {
   return response.json();
 };
 
+export const fetchExplorations = async () => {
+  const response = await fetch(`${BASE_URL}/api/explorations`);
+  if (!response.ok) {
+    throw new Error('Failed to fetch explorations');
+  }
+  return await response.json();
+};
+
 export const deleteExploration = async (explorationId: string) => {
   const response = await fetch(`${BASE_URL}/api/explorations/${explorationId}`, {
     method: 'DELETE',
