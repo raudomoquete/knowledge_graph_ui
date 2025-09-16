@@ -79,7 +79,8 @@ function App() {
       setNodes(data.nodes);
       setEdges(data.edges);
     } catch (err) {
-      setError('Failed to explore graph');
+      console.error('Error exploring graph:', err);
+      setError('Failed to explore graph. Please try again later.');
     } finally {
       setLoading(false);
     }
@@ -99,7 +100,8 @@ function App() {
       setNodes((prevNodes) => [...prevNodes, ...data.nodes]);
       setEdges((prevEdges) => [...prevEdges, ...data.edges]);
     } catch (err) {
-      setError('Failed to expand node');
+      console.error('Error expanding node:', err);
+      setError('Failed to expand node. Please try again later.');
     } finally {
       setLoading(false);
     }
